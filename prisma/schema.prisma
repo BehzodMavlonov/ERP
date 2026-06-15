@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  directUrl         = env("DIRECT_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+enum Unit {
+  KG
+  LITR
+  DONA
+  GRAM
+  ML
+}
+
+model Ingredient {
+  id           String   @id @default(cuid())
+  name         String
+  unit         Unit
+  stock        Decimal  @default(0) @db.Decimal(12, 3)
+  minThreshold Decimal  @default(0) @db.Decimal(12, 3)
+  costPerUnit  Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  recipeItems    RecipeItem[]
+  stockMovements StockMovement[]
+}
+
+enum StockMovementType {
+  IN
+  OUT
+}
+
+model StockMovement {
+  id           String            @id @default(cuid())
+  ingredientId String
+  ingredient   Ingredient        @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  type         StockMovementType
+  quantity     Decimal           @db.Decimal(12, 3)
+  note         String?
+  orderId      String?
+  order        Order?            @relation(fields: [orderId], references: [id])
+  createdAt    DateTime          @default(now())
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  name      String
+  price     Decimal  @db.Decimal(12, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipeItems RecipeItem[]
+  orderItems  OrderItem[]
+}
+
+model RecipeItem {
+  id           String     @id @default(cuid())
+  productId    String
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  quantity     Decimal    @db.Decimal(12, 3)
+
+  @@unique([productId, ingredientId])
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  createdAt DateTime @default(now())
+
+  orders Order[]
+}
+
+enum OrderStatus {
+  NEW
+  IN_PROGRESS
+  READY
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  customerId  String?
+  customer    Customer?   @relation(fields: [customerId], references: [id])
+  status      OrderStatus @default(NEW)
+  totalAmount Decimal     @default(0) @db.Decimal(12, 2)
+  dueDate     DateTime?
+  note        String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  items          OrderItem[]
+  stockMovements StockMovement[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Decimal @db.Decimal(12, 2)
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model Transaction {
+  id          String          @id @default(cuid())
+  type        TransactionType
+  amount      Decimal         @db.Decimal(12, 2)
+  category    String
+  description String?
+  date        DateTime        @default(now())
+  createdAt   DateTime        @default(now())
+}
+
+model TelegramLink {
+  id        String   @id @default(cuid())
+  chatId    String   @unique
+  label     String?
+  createdAt DateTime @default(now())
+}
