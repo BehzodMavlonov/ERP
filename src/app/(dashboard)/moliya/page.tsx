@@ -7,12 +7,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { StatCard } from "@/components/stat-card";
 import { formatSum } from "@/lib/format";
 import { TransactionDialog } from "./transaction-dialog";
 import { DeleteTransactionButton } from "./delete-button";
 import { FilterForm } from "./filter-form";
+import { TrendingUp, TrendingDown, Wallet } from "lucide-react";
 import type { Prisma, TransactionType } from "@prisma/client";
 
 export default async function MoliyaPage({
@@ -47,37 +49,32 @@ export default async function MoliyaPage({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Moliya</h1>
+        <h1 className="text-xl font-bold">Moliya</h1>
         <TransactionDialog />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Jami kirim</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-green-600">{formatSum(income)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Jami chiqim</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-destructive">{formatSum(expense)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Sof foyda</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className={`text-2xl font-semibold ${net < 0 ? "text-destructive" : ""}`}>
-              {formatSum(net)}
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Jami kirim"
+          value={formatSum(income)}
+          icon={TrendingUp}
+          color="green"
+          valueClassName="text-chart-2"
+        />
+        <StatCard
+          title="Jami chiqim"
+          value={formatSum(expense)}
+          icon={TrendingDown}
+          color="red"
+          valueClassName="text-chart-4"
+        />
+        <StatCard
+          title="Sof foyda"
+          value={formatSum(net)}
+          icon={Wallet}
+          color={net < 0 ? "destructive" : "primary"}
+          valueClassName={net < 0 ? "text-destructive" : ""}
+        />
       </div>
 
       <FilterForm />
@@ -114,7 +111,7 @@ export default async function MoliyaPage({
                   <TableCell>{t.category}</TableCell>
                   <TableCell className="text-muted-foreground">{t.description}</TableCell>
                   <TableCell
-                    className={t.type === "INCOME" ? "text-green-600" : "text-destructive"}
+                    className={t.type === "INCOME" ? "text-chart-5" : "text-destructive"}
                   >
                     {t.type === "INCOME" ? "+" : "-"}
                     {formatSum(t.amount.toString())}

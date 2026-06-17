@@ -24,6 +24,14 @@ export const ORDER_STATUS_LABELS: Record<string, string> = {
   CANCELLED: "Bekor qilindi",
 };
 
+export const ORDER_STATUS_COLORS: Record<string, string> = {
+  NEW: "bg-chart-3",
+  IN_PROGRESS: "bg-chart-2",
+  READY: "bg-chart-4",
+  DELIVERED: "bg-chart-5",
+  CANCELLED: "bg-muted-foreground",
+};
+
 export const TRANSACTION_CATEGORIES = {
   INCOME: ["Sotuv", "Boshqa kirim"],
   EXPENSE: [

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { ORDER_STATUS_LABELS } from "@/lib/format";
+import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { OrderDialog } from "./order-dialog";
 import { OrderCard } from "./order-card";
 
@@ -19,7 +20,7 @@ export default async function BuyurtmalarPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Buyurtmalar</h1>
+        <h1 className="text-xl font-bold">Buyurtmalar</h1>
         <OrderDialog
           products={products.map((p) => ({ id: p.id, name: p.name, price: p.price.toString() }))}
         />
@@ -30,8 +31,12 @@ export default async function BuyurtmalarPage() {
           const columnOrders = orders.filter((o) => o.status === status);
           return (
             <div key={status} className="flex flex-col gap-3">
-              <h2 className="text-sm font-medium text-muted-foreground">
-                {ORDER_STATUS_LABELS[status]} ({columnOrders.length})
+              <h2 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <span className={cn("size-2 rounded-full", ORDER_STATUS_COLORS[status])} />
+                {ORDER_STATUS_LABELS[status]}
+                <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-foreground">
+                  {columnOrders.length}
+                </span>
               </h2>
               <div className="flex flex-col gap-3">
                 {columnOrders.map((order) => (

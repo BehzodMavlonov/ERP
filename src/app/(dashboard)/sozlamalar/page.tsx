@@ -19,7 +19,7 @@ export default async function SozlamalarPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">Sozlamalar</h1>
+      <h1 className="text-xl font-bold">Sozlamalar</h1>
 
       <Card>
         <CardHeader>

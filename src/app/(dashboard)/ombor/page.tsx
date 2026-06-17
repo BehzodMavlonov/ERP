@@ -8,12 +8,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { StatCard } from "@/components/stat-card";
 import { formatNumber, formatSum, UNIT_LABELS } from "@/lib/format";
 import { IngredientDialog } from "./ingredient-dialog";
 import { StockMovementDialog } from "./stock-movement-dialog";
 import { DeleteIngredientButton } from "./delete-button";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Warehouse, PackageX } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -34,31 +35,19 @@ export default async function OmborPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Ombor</h1>
+        <h1 className="text-xl font-bold">Ombor</h1>
         <IngredientDialog />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">
-              Ombor qiymati
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold">{formatSum(totalValue)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">
-              Kam qolgan xomashyolar
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold">{lowStockCount}</p>
-          </CardContent>
-        </Card>
+        <StatCard title="Ombor qiymati" value={formatSum(totalValue)} icon={Warehouse} color="amber" />
+        <StatCard
+          title="Kam qolgan xomashyolar"
+          value={lowStockCount}
+          icon={PackageX}
+          color={lowStockCount > 0 ? "destructive" : "green"}
+          valueClassName={lowStockCount > 0 ? "text-destructive" : ""}
+        />
       </div>
 
       <Card>

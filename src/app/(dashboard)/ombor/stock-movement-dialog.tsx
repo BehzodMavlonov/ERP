@@ -64,7 +64,7 @@ export function StockMovementDialog({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="IN">
-                  <ArrowDownToLine className="size-4 text-green-600" />
+                  <ArrowDownToLine className="size-4 text-chart-5" />
                   Kirim
                 </SelectItem>
                 <SelectItem value="OUT">

@@ -10,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatSum, ORDER_STATUS_LABELS } from "@/lib/format";
+import { formatSum, ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { updateOrderStatus, deleteOrder } from "./actions";
 import { Trash2 } from "lucide-react";
 
@@ -45,7 +46,8 @@ export function OrderCard({ order }: { order: OrderCardData }) {
   }
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
+      <div className={cn("h-1 w-full", ORDER_STATUS_COLORS[order.status] ?? "bg-muted")} />
       <CardHeader className="flex items-start justify-between gap-2">
         <CardTitle className="text-sm">
           {order.customer?.name ?? "Mijozsiz"}

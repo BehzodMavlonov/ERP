@@ -9,12 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { StatCard } from "@/components/stat-card";
 import { formatNumber, formatSum, UNIT_LABELS } from "@/lib/format";
 import { RecipeItemDialog } from "../recipe-item-dialog";
 import { RemoveRecipeItemButton } from "./remove-recipe-item-button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Coins, Tag, TrendingUp } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -58,36 +59,19 @@ export default async function ProductRecipePage({
             </Link>
           }
         />
-        <h1 className="text-2xl font-semibold">{product.name}</h1>
+        <h1 className="text-xl font-bold">{product.name}</h1>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Tannarx</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold">{formatSum(cost)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Sotuv narxi</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold">{formatSum(price)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Foyda</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className={`text-2xl font-semibold ${profit < 0 ? "text-destructive" : ""}`}>
-              {formatSum(profit)}
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard title="Tannarx" value={formatSum(cost)} icon={Coins} color="amber" />
+        <StatCard title="Sotuv narxi" value={formatSum(price)} icon={Tag} color="blue" />
+        <StatCard
+          title="Foyda"
+          value={formatSum(profit)}
+          icon={TrendingUp}
+          color={profit < 0 ? "destructive" : "green"}
+          valueClassName={profit < 0 ? "text-destructive" : ""}
+        />
       </div>
 
       <div className="flex items-center justify-between">

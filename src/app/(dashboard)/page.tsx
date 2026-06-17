@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatCard } from "@/components/stat-card";
+import { TrendingUp, TrendingDown, Wallet, Warehouse, ShoppingCart } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 import { formatSum, formatNumber } from "@/lib/format";
@@ -75,63 +77,56 @@ export default async function DashboardPage() {
   }));
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">Dashboard</h1>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Oylik kirim</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-green-600">{formatSum(monthIncome)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Oylik chiqim</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-destructive">{formatSum(monthExpense)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Sof foyda (oy)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className={`text-2xl font-semibold ${monthNet < 0 ? "text-destructive" : ""}`}>
-              {formatSum(monthNet)}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Ombor qiymati</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold">{formatSum(inventoryValue)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground">Ochiq buyurtmalar</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold">{formatNumber(openOrdersCount)}</p>
-            {lowStockCount > 0 && (
-              <p className="text-xs text-destructive mt-1">
-                {lowStockCount} xomashyo kam qoldi
-              </p>
-            )}
-          </CardContent>
-        </Card>
+    <div className="flex flex-col gap-6">
+      {/* Page title */}
+      <div>
+        <h1 className="text-xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Umumiy holat va statistika</p>
       </div>
 
+      {/* KPI cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <StatCard
+          title="Oylik kirim"
+          value={formatSum(monthIncome)}
+          icon={TrendingUp}
+          color="green"
+          valueClassName="text-chart-2"
+        />
+        <StatCard
+          title="Oylik chiqim"
+          value={formatSum(monthExpense)}
+          icon={TrendingDown}
+          color="red"
+          valueClassName="text-chart-4"
+        />
+        <StatCard
+          title="Sof foyda"
+          value={formatSum(monthNet)}
+          icon={Wallet}
+          color={monthNet < 0 ? "red" : "primary"}
+          valueClassName={monthNet < 0 ? "text-chart-4" : "text-primary"}
+        />
+        <StatCard
+          title="Ombor qiymati"
+          value={formatSum(inventoryValue)}
+          icon={Warehouse}
+          color="amber"
+        />
+        <StatCard
+          title="Ochiq buyurtmalar"
+          value={formatNumber(openOrdersCount)}
+          icon={ShoppingCart}
+          color="blue"
+          hint={lowStockCount > 0 ? `${lowStockCount} xomashyo kam qoldi` : undefined}
+        />
+      </div>
+
+      {/* Charts */}
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Kirim/Chiqim dinamikasi (30 kun)</CardTitle>
+            <CardTitle className="text-sm font-semibold">Kirim / Chiqim (30 kun)</CardTitle>
           </CardHeader>
           <CardContent>
             <TrendChart data={trendData} />
@@ -139,11 +134,13 @@ export default async function DashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Eng ko&apos;p sotilgan mahsulotlar</CardTitle>
+            <CardTitle className="text-sm font-semibold">Eng ko&apos;p sotilgan mahsulotlar</CardTitle>
           </CardHeader>
           <CardContent>
             {topProducts.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Hozircha ma&apos;lumot yo&apos;q</p>
+              <div className="flex h-40 items-center justify-center">
+                <p className="text-sm text-muted-foreground">Hozircha ma&apos;lumot yo&apos;q</p>
+              </div>
             ) : (
               <TopProductsChart data={topProducts} />
             )}
